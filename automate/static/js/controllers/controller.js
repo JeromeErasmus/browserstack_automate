@@ -27,7 +27,7 @@ app.controller("ResourceController", function($scope, RequestRunners, RequestRes
   {
 
    // var project = Project.get({ project_path: 'C:\\Users\\administrator\\AppData\\Roaming' }, function() {
-      var project = Project.get({ project_path: 'C:\\dev\\browserstack_selinium_automate\\automate\\samples'}, function() {
+      var project = Project.get({ project_path: 'C:\\dev\\testing'}, function() {
       if(project.success)
       {
         $scope.getRunners();
@@ -36,7 +36,7 @@ app.controller("ResourceController", function($scope, RequestRunners, RequestRes
     });
   };
 
-   /*********************************************
+  /*********************************************
   Runners
   **********************************************/
   $scope.getRunners = function()
@@ -53,8 +53,6 @@ app.controller("ResourceController", function($scope, RequestRunners, RequestRes
     // change click state on runner group list 
     var elm = angular.element( event.currentTarget );
     angular.forEach(elm.parent().children(), function(value, key) {
-      console.log(key + ': ' + value);
-    
       angular.element( value ).removeClass("active");
     });
     elm.addClass("active");
@@ -65,11 +63,11 @@ app.controller("ResourceController", function($scope, RequestRunners, RequestRes
     });
   };
 
-  $scope.$on('profile-updated', function(event, profileObj) {
-        // profileObj contains; name, country and email from emitted event
-         console.log("YESS");
-    });
+ 
 
+  /*********************************************
+  Modal Controls
+  **********************************************/
 
   //$scope.createProject('C:\\Users\\administrator\\AppData\\Roaming');
  // $scope.createProject('C:\\Users\\administrator\\AppData\\Roaming');
@@ -88,11 +86,20 @@ app.controller("ResourceController", function($scope, RequestRunners, RequestRes
 */
   
 
-  
+
+});
+app.directive('myModal', function() {
+    return {
+        restrict: 'E',
+        templateUrl: 'myModalContent.html',
+        controller: function ($scope) {
+          $scope.selected = {
+            item: $scope.items[0] 
+          };
+        }
+    };
+});
+app.controller('ModalDemoCtrl', function($scope, Modal) {
 
   
 });
-
-
-
-
