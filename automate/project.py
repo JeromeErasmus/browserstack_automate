@@ -6,7 +6,7 @@ from time import strftime
 class Project():
 	def __init__(self):
 		self.root_rolder_name = "automate.project"
-		self.manifest_file_name = "automate.manifest"
+		self.manifest_file_name = "automate.prj"
 		self.reports_dir_folder_name = "reports"
 		self.project_dir = None
 		self.manifest_file = None
@@ -15,7 +15,7 @@ class Project():
 
 	def load(self, project_dir, auto_create_project=False):
 		self.project_dir = project_dir
-		self.manifest_file = os.path.join(self.project_dir, self.root_rolder_name, self.manifest_file_name)
+		self.manifest_file = os.path.join(self.project_dir, self.manifest_file_name)
 		self.reports_dir   = os.path.join(self.project_dir, self.root_rolder_name, self.reports_dir_folder_name)
 
 		# check if a project has already been created. If not create one
@@ -26,7 +26,7 @@ class Project():
 
 	def create_project(self, project_dir):
 		self.project_dir = project_dir
-		self.manifest_file = os.path.join(self.project_dir, self.root_rolder_name, self.manifest_file_name)
+		self.manifest_file = os.path.join(self.project_dir, self.manifest_file_name)
 		self.reports_dir   = os.path.join(self.project_dir, self.root_rolder_name, self.reports_dir_folder_name)
 		targets = [self.manifest_file, self.reports_dir]
 
@@ -107,6 +107,7 @@ class Project():
 				manifest = json.dumps(obj)
 				f.write(manifest)
 				f.close()
+			return True
 		except IOError:
 			print "Error saving to manifest file:", self.manifest_file
-			sys.exit()
+			return False

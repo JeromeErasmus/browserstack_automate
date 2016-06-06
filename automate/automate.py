@@ -19,7 +19,7 @@ class Automate():
 	def run(self, project_dir):
 		pass
 		self.project = Project()
-		self.project.load_project(project_dir, True)
+		self.project.load(project_dir, True)
 		runner_uid = self.project.add_project_runner()
 		
 		for tdevice in self.target_devices:

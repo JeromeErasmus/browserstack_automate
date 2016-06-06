@@ -12,7 +12,7 @@ if __name__ == '__main__':
 	parser.add_argument('operations', metavar='N', type=str, nargs='+', 
 		help='Instructs the application what operations to perform. \nThe following operations can be called: run \n client \n getallcapabilities\n')
 	parser.add_argument('-c', '--capabilities', type=int, help='Get latest capabilities', required=False)
-	parser.add_argument('-path', '--path', type=str, help='Folder path to Behave project files', required=False, nargs='+')
+	parser.add_argument('-p', '--path', type=str, help='Folder path to Behave project files', required=False, nargs='+')
 
 	args = parser.parse_args()
 	automateapp = Automate()
