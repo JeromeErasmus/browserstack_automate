@@ -23,14 +23,13 @@ app.factory("Project", function($resource) {
   return $resource("/project")
 });
 */
-var app = angular.module('myApp', ['ngAnimate', 'ui.bootstrap', 'ngResource']);
+var app = angular.module('myApp', ['ui.bootstrap', 'ngResource']);
 
 app.config(['$interpolateProvider', function($interpolateProvider) {
   $interpolateProvider.startSymbol('{[');
   $interpolateProvider.endSymbol(']}');
 
 }]);
-
 
 app.config(['$interpolateProvider', function($interpolateProvider) {
   $interpolateProvider.startSymbol('{[');
@@ -52,4 +51,9 @@ app.factory("RequestResults", function($resource) {
 
 app.factory("Project", function($resource) {
   return $resource("/project")
+});
+
+// create a shared scope object to share between controllers
+app.factory('ProjectData', function () {
+    return { name: 'Tester', apiuser: '', apikey:'', location:'' };
 });

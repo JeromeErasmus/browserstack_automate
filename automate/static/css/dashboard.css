@@ -64,10 +64,10 @@ h5 {
 .bs-callout-success h4 {
     color: #6db33f;
 }
-.bs-callout-danger {
+.bs-callout-dark {
     border-left-color: #d9534f;
 }
-.bs-callout-danger h4 {
+.bs-callout-dark h4 {
     color: #d9534f;
 }
 .bs-callout-warning {
@@ -209,10 +209,10 @@ main
 .glyphicon {
   top:0px;
 }
-
+/*
 .nav>li>a {
     padding: 5px 15px;
-}
+}*/
 
 .list-group-item {
   padding: 20px 15px;
@@ -372,4 +372,65 @@ Modal styles
 .modal-footer {
   background-color: #EFEFEF;
   border-top:1px solid #CCCCCC;
+}
+
+
+
+/* ******************************************************
+Custom button styles
+*********************************************************/
+a.btn-dark{
+      color: #9d9d9d;
+}
+.btn-dark:focus,
+.btn-dark.focus {
+  color: #fff;
+  background-color: #232323;
+  border-color: #000;
+}
+.btn-dark:hover {
+  color: #fff;
+  background-color: #232323;
+  border-color: #000;
+}
+.btn-dark:active,
+.btn-dark.active,
+.open > .dropdown-toggle.btn-dark {
+  color: #fff;
+  background-color: #232323;
+  border-color: #000;
+}
+.btn-dark:active:hover,
+.btn-dark.active:hover,
+.open > .dropdown-toggle.btn-dark:hover,
+.btn-dark:active:focus,
+.btn-dark.active:focus,
+.open > .dropdown-toggle.btn-dark:focus,
+.btn-dark:active.focus,
+.btn-dark.active.focus,
+.open > .dropdown-toggle.btn-dark.focus {
+  color: #fff;
+  background-color: #000;
+  border-color: #232323;
+}
+.btn-dark:active,
+.btn-dark.active,
+.open > .dropdown-toggle.btn-dark {
+  background-image: none;
+}
+.btn-dark.disabled:hover,
+.btn-dark[disabled]:hover,
+fieldset[disabled] .btn-dark:hover,
+.btn-dark.disabled:focus,
+.btn-dark[disabled]:focus,
+fieldset[disabled] .btn-dark:focus,
+.btn-dark.disabled.focus,
+.btn-dark[disabled].focus,
+fieldset[disabled] .btn-dark.focus {
+  background-color: #232323;
+  border-color: #232323;
+}
+.btn-dark .badge {
+  color: #232323;
+  background-color: #fff;
 }
