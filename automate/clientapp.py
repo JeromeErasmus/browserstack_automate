@@ -3,6 +3,7 @@ from project import Project
 import time
 import os.path as path
 import json
+from json import JSONEncoder
 
 client_app = Flask(__name__)
 client_app.debug = True
@@ -26,6 +27,16 @@ def run():
 #			#print project.get_runner_latest_report()
 #		time.sleep(2)
 
+class MyEncoder(JSONEncoder):
+    def default(self, o):
+        return o.__dict__
+
+
+class CustomResponse():
+	def __init__(self, status, data=None, message=None):
+		self.data = data
+		self.status = status
+		self.message = message
 
 @client_app.route('/')
 def index():
@@ -46,9 +57,13 @@ def data_result_by_id(result_id):
 def projectdata():
 	if request.method == 'POST':
 		if request.get_data():
-			project_obj = json.loads(request.get_data())
-			project.create_project(project_obj['project_path'])
-		return jsonify([])
+			data = json.loads(request.get_data())
+			project_data = project.create_project(data['name'], data['apiuser'], data['apikey'], data['tests_location'])
+			resp = CustomResponse("success", project_data, '')
+		else:
+			resp = CustomResponse("error", None, "Incorrect post data")
+			
+		return MyEncoder().encode(resp)
 	elif request.method == 'GET':
 		if request.args.get('project_path'):
 			result = project.load(request.args.get('project_path'))

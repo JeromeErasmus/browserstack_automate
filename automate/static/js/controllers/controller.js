@@ -1,10 +1,8 @@
 
-app.controller("ResourceController", function($scope, RequestRunners, RequestResults, Project) {
-  // --------------------------------------------
-  // Varz 
-  // --------------------------------------------
-  $scope.runners = [];
+app.controller("ResourceController", function($scope, RequestRunners, RequestResults, Project, ProjectData) {
 
+  $scope.projectData = ProjectData;
+  $scope.runners = [];
 
   // --------------------------------------------
   // Project 
@@ -12,30 +10,7 @@ app.controller("ResourceController", function($scope, RequestRunners, RequestRes
   //$scope.project = new Project(); 
   //$scope.project.project_path = "asdasd";
 
-  // create new project
-  $scope.createProject = function(projectPath) 
-  {
   
-    $scope.project.project_path = projectPath;
-    Project.save($scope.project, function() {
-      //data saved. do something here.
-      console.log($scope.project);
-    }); //saves an project. Assuming $scope.project is the Project object 
-  };
-
-  // load an existing project
-  $scope.loadProject = function(projectPath) 
-  {
-
-   // var project = Project.get({ project_path: 'C:\\Users\\administrator\\AppData\\Roaming' }, function() {
-      var project = Project.get({ project_path: 'C:\\dev\\testing'}, function() {
-      if(project.success)
-      {
-        $scope.getRunners();
-      
-      }
-    });
-  };
 
   // --------------------------------------------
   // Runners
@@ -46,8 +21,6 @@ app.controller("ResourceController", function($scope, RequestRunners, RequestRes
       $scope.runners = data.data;
     });
   }
-  
-
 
   $scope.getRunnerResults = function(event, runner_id)
   {
@@ -66,10 +39,6 @@ app.controller("ResourceController", function($scope, RequestRunners, RequestRes
 
  
 
-  // --------------------------------------------
-  // Modal Controls
-  // --------------------------------------------
-
   //$scope.createProject('C:\\Users\\administrator\\AppData\\Roaming');
  // $scope.createProject('C:\\Users\\administrator\\AppData\\Roaming');
   
@@ -87,54 +56,130 @@ app.controller("ResourceController", function($scope, RequestRunners, RequestRes
 
 });
 
-app.controller('ModalDemoCtrl', function($scope, $uibModal, $log) {
 
-  $scope.items = ['item1', 'item2', 'item3'];
+// --------------------------------------------
+// Project Controls
+// --------------------------------------------
 
-  $scope.animationsEnabled = true;
+app.controller('ProjectCtrl', function($scope, $uibModal, $log, ProjectData, Project) 
+{
+  $scope.projectData = ProjectData;
 
-  $scope.open = function (size) {
 
+  // load an existing project
+  $scope.loadProject = function(size) 
+  {
+    
     var modalInstance = $uibModal.open({
-      animation: $scope.animationsEnabled,
-      templateUrl: 'myModalContent.html',
-      controller: 'ModalInstanceCtrl',
-      size: size,
-      resolve: {
-        items: function () {
-          return $scope.items;
-        }
-      }
+      templateUrl: 'ModalProjectLoad.html',
+      controller: 'ModalProjectLoadInstanceCtrl',
+      size: size
     });
 
-    modalInstance.result.then(function(selectedItem) {
-      $scope.selected = selectedItem;
+    modalInstance.result.then(function(formData) {
+
+    }, function () {
+      $log.info('Modal dismissed at: ' + new Date());
+    });
+
+    /*  var project = Project.get({ project_path: 'C:\\dev\\testing'}, function() {
+      if(project.success)
+      {
+        $scope.getRunners();
+      }
+    });*/
+  };
+
+  // --------------------------------------------
+  // Modal controls
+  // --------------------------------------------
+  $scope.createProject = function (size) {
+    
+    var modalInstance = $uibModal.open({
+      templateUrl: 'ModalProjectCreate.html',
+      controller: 'ModalProjectCreateInstanceCtrl',
+      size: size
+    });
+
+    modalInstance.result.then(function(formData) {
+
+      // create new project
+      var result = Project.save(formData, function() 
+      {
+        if(result && result.status == "success")
+        {
+          $.each( result.data, function( key, value ) {
+            $scope.projectData[key] = value;
+          });
+        }
+      }); 
+
+
     }, function () {
       $log.info('Modal dismissed at: ' + new Date());
     });
   };
-
-  $scope.toggleAnimation = function () {
-    $scope.animationsEnabled = !$scope.animationsEnabled;
-  };
-
 });
 
-// Please note that $uibModalInstance represents a modal window (instance) dependency.
-// It is not the same as the $uibModal service used above.
 
-app.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, items) {
-
-  $scope.items = items;
-  $scope.selected = {
-    item: $scope.items[0]
-  };
+app.controller('ModalProjectCreateInstanceCtrl', function ($scope, $uibModalInstance) 
+{
+  $scope.formData = { name: '', apiuser: '', apikey:'', manifest_file:'', project_ref:'', tests_location:'',status:'' };
 
   $scope.ok = function () {
-    $uibModalInstance.close($scope.selected.item);
+    $uibModalInstance.close($scope.formData);
   };
 
   $scope.cancel = function () {
     $uibModalInstance.dismiss('cancel');
   };
+
+  // handle pretty looking folder browser
+  $(document).on('change', '.modal :file', function() {
+      console.log("Opening file chooser");
+      var input = $(this),
+          numFiles = input.get(0).files ? input.get(0).files.length : 1,
+          label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+      input.trigger('fileselect', [numFiles, label]);
+      console.log(input);
+      //$(".modal #projectFolderBrowse").val(label);
+      $scope.projectData.location = label;
+  });
+/*
+
+  $('.modal :file').on('fileselect', function(event, numFiles, label) {
+    console.log("on file select");
+      $(".modal #projectFolderBrowse").val(label);
+      console.log(numFiles);
+      console.log(label);
+  });*/
+
+});
+
+
+
+app.controller('ModalProjectLoadInstanceCtrl', function ($scope, $uibModalInstance) 
+{
+ /* $scope.formData = { name: '', apiuser: '', apikey:'', manifest_file:'', project_ref:'', tests_location:'',status:'' };
+
+  $scope.ok = function () {
+    $uibModalInstance.close($scope.formData);
+  };
+
+  $scope.cancel = function () {
+    $uibModalInstance.dismiss('cancel');
+  };
+
+  // handle pretty looking folder browser
+  $(document).on('change', '.modal :file', function() {
+      console.log("Opening file chooser");
+      var input = $(this),
+          numFiles = input.get(0).files ? input.get(0).files.length : 1,
+          label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+      input.trigger('fileselect', [numFiles, label]);
+      console.log(input);
+      //$(".modal #projectFolderBrowse").val(label);
+      $scope.projectData.location = label;
+  });*/
+
 });
