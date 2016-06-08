@@ -7,12 +7,13 @@
     <meta content="" name="description">
     <meta content="" name="author">
     <link href="../../favicon.ico" rel="icon">
-    <title>Dashboard Template for Bootstrap</title><!-- Bootstrap core CSS -->
+    <title>Dashboard</title>
     
-    <link href="static/css/bootstrap.min.css" rel="stylesheet"><!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <link href="static/css/ie10-viewport-bug-workaround.css" rel="stylesheet"><!-- Custom styles for this template -->
+    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="static/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
     <link rel="stylesheet" href="static/css/bootstrap-table.css">
-    <link href="static/css/dashboard.css" rel="stylesheet"><!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <link href="static/css/dashboard.css" rel="stylesheet">
+    <link rel="stylesheet" href="static/css/font-awesome.min.css">
 
 </head>
 <body ng-app="myApp"  ng-controller="ResourceController">
@@ -44,8 +45,8 @@
 
 
     <!-- Create Proejct Modal -->
-    <div ng-controller="ModalDemoCtrl">
-      <script type="text/ng-template" id="myModalContent.html">
+    <div ng-controller="ProjectCtrl">
+      <script type="text/ng-template" id="ModalProjectCreate.html">
     
               <div class="modal-header">
                 <h4 class="modal-title" id="myModalLabel">Create New Project</h4>
@@ -54,48 +55,61 @@
                
                   <div class="form-group">
                       <label for="name">Project Name</label> 
-                      <input class="form-control" id="name" placeholder="Name" type="text" ng-model="projectData.name">
+                      <input class="form-control" id="name" placeholder="Name" type="text" ng-model="formData.name">
                   </div>
                   <div class="form-group">
                     <div class="input-group">
                       <label class="input-group-btn">
                         <span class="btn btn-primary">
-                          Browse… <input type="file" style="display: none;" multiple=""   ng-model="projectData.location">
+                          Browse… <input type="file" style="display: none;" multiple="true" accept="*.feature" >
                         </span>
                       </label>
-                      <input type="text" class="form-control" readonly="" id="projectFolderBrowse">
+                      <input type="text" class="form-control" readonly="" id="projectFolderBrowse" ng-model="formData.location" >
                     </div>
 
                   </div>
                   <div class="form-group">
+                      <label for="project_api_user">Behave tests folder</label> 
+                      <input class="form-control" id="project_tests_location" type="text"  placeholder="C:\\"  ng-model="formData.tests_location">
+                  </div>
+                  <div class="form-group">
                       <label for="project_api_user">Browserstack API User</label> 
-                      <input class="form-control" id="project_api_user" type="text"  placeholder="API User"  ng-model="projectData.apiuser">
+                      <input class="form-control" id="project_api_user" type="text"  placeholder="API User"  ng-model="formData.apiuser">
                   </div>
                   <div class="form-group">
                       <label for="project_access_key">Browserstack Access Key</label> 
-                      <input class="form-control" id="project_access_key" type="text"  placeholder="Access Key"  ng-model="projectData.apikey" >
+                      <input class="form-control" id="project_access_key" type="text"  placeholder="Access Key"  ng-model="formData.apikey" >
                   </div>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal"  ng-click="cancel()">Close</button>
                 <button type="button" class="btn btn-primary" ng-click="ok()">Create Project</button>
               </div>
-    
-      
-        <div class="modal-header">
-                    <h3 class="modal-title">Title</h3>
-                </div>
-                <div class="modal-body">
-                    <ul>
-                        <li ng-repeat="item in items">
-                            <a href="#" ng-click="$event.preventDefault(); selected.item = item">{[ item ]}</a>
-                        </li>
-                    </ul>
-                    Selected: <b>{[ selected.item ]}</b>
-                </div>
       </script>
     
-
+      
+      <script type="text/ng-template" id="ModalProjectLoad.html">
+    
+              <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Load Project</h4>
+              </div>
+              <div class="modal-body">
+                <table id="load_project_table">
+                    <thead>
+                    <tr>
+                        <th data-field="name">Proejct Name</th>
+                        <th data-field="create_date">Create Date</th>
+                        <th data-field="modified_date">Modified Date</th>
+                    </tr>
+                    </thead>
+                </table>
+                
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal"  ng-click="cancel()">Close</button>
+                <button type="button" class="btn btn-primary" ng-click="ok()">Create Project</button>
+              </div>
+      </script>
 
       <nav class="navbar navbar-inverse navbar-fixed-top">
           <div class="container-fluid">
@@ -112,9 +126,8 @@
               <div class="navbar-collapse collapse" id="navbar">
                 <form class="navbar-form navbar-right" role="search">
                     <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                    <span><a href="#"  class="btn btn-dark" data-toggle="modal" ng-click="open()">Create New Project</a></span>
-                    <span><a href="#"  class="btn btn-dark" data-toggle="modal" data-target="#createNewProjectModal">Create New Project</a></span>
-                    <a href="#" class="btn btn-dark" data-toggle="modal" data-target="#loadProject" ng-click="loadProject()">Load Project</a>
+                    <span><a href="#"  class="btn btn-dark" data-toggle="modal" ng-click="createProject()">Create New Project</a></span>
+                    <span><a href="#"  class="btn btn-dark" data-toggle="modal" ng-click="loadProject('lg')">Load Project</a></span>
                     <a href="#" class="btn btn-dark">Settings</a>
               </div>
           </div>
@@ -126,22 +139,40 @@
     <div class="container-fluid" >
         <div class="row">
              <div class="col-md-2 sidebar">
-                <ul class="nav nav-sidebar">
+              <div ng-show="projectData.manifest_file" >
+
+                <ul class="nav nav-sidebar" >
                     <li>
-                        <h3>{[projectData.name]}</h3>
-                        <div>{[projectData.apiuser]}</div>
-                        <div>{[projectData.apikey]}</div>
-                        <div>Parallel tests running: 0 / 5</div>
-                
+                        <h4>asdasd{[projectData.name]}</h4>
                     </li>
                 </ul>
-                <ul class="nav nav-sidebar">
+                <div class="panel-group">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <i class="pull-right fa fa-plus margin-bottom"></i>
+                      <h5>
+                        Access Keys
+                        <a data-toggle="collapse" href="#collapse1">Access Keys</a>
+                      </h5>
+                    </div>
+                    <div id="collapse1" class="panel-collapse collapse">
+                      <span><strong>API Username</strong></span>
+                      <div>{[projectData.apiuser]}</div>
+                      <span><strong>API Access Key</strong></span>
+                      <div>{[projectData.apikey]}</div>
+                    </div>
+                  </div>
+                </div>
+              
+                        <div>Parallel tests running: 0 / 5</div>
+              
+                <ul class="nav nav-sidebar" >
                     
                     <li>
                        <ul class="list-group">
                           <li class="list-group-item">
                             <div class="title">
-                                <i class="pull-right glyphicon glyphicon-refresh"></i><h5>My Workflow 1   </h5>
+                                <i class="pull-right fa fa-refresh fa-spin fa-2x fa-fw margin-bottom"></i><h5>My Workflow 1   </h5>
 
                             <div class="details">Started: about 4 hours ago</div>
                             <div class="sidebar-stat">
@@ -161,11 +192,10 @@
                         </ul>
                     </li>
                 </ul>
-               
+              </div>
             </div>
             <div class="col-sm-offset-2 col-md-10 main">
-           
-
+              <div ng-show="projectData.manifest_file">
                 <ul class="list-group tabcontainer" >
                    
                     <li class="list-group-item " >
@@ -275,6 +305,17 @@
                         </div>
                     </li>
                 </ul>
+              </div>
+
+              <div ng-show="!projectData.manifest_file">
+               <div class="row center unopened">
+                    <div class="col-md-4 col-md-offset-3">
+                      <i class="fa fa-rocket fa-5x fa-fw lightgrey"></i>
+                        <h3></span>No project loaded</span></h3>
+                        <span>Create or load a project to get started</span>
+                    </div>
+                </div>
+              </div>
             </div>
         </div>
 
@@ -380,20 +421,6 @@ $(function () {
         data: data
     });
 
-    // handle pretty looking folder browser
-    $(document).on('change', ':file', function() {
-      var input = $(this),
-          numFiles = input.get(0).files ? input.get(0).files.length : 1,
-          label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-      input.trigger('fileselect', [numFiles, label]);
-  });
-
-
-    $(':file').on('fileselect', function(event, numFiles, label) {
-        $("#projectFolderBrowse").val(label);
-        console.log(numFiles);
-        console.log(label);
-    });
 
 });
 

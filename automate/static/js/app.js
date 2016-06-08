@@ -55,5 +55,5 @@ app.factory("Project", function($resource) {
 
 // create a shared scope object to share between controllers
 app.factory('ProjectData', function () {
-    return { name: 'Tester', apiuser: '', apikey:'', location:'' };
+    return { name: '', apiuser: '', apikey:'', manifest_file:'', project_ref:'', tests_location:'',status:'', feature_files:'', create_date:'', modified_date:'' };
 });
