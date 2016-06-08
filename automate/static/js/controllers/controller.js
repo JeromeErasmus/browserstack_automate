@@ -74,6 +74,20 @@ app.controller('ProjectCtrl', function($scope, $uibModal, $log, ProjectData, Pro
       templateUrl: 'ModalProjectLoad.html',
       controller: 'ModalProjectLoadInstanceCtrl',
       size: size
+      
+    });
+
+    modalInstance.rendered.then(function() {
+
+      // get a list of all project
+      Project.query(function(projects) {
+     
+        $(".modal #load_project_table").bootstrapTable({
+          data: projects.data
+        });
+      });
+
+      
     });
 
     modalInstance.result.then(function(formData) {
@@ -160,6 +174,17 @@ app.controller('ModalProjectCreateInstanceCtrl', function ($scope, $uibModalInst
 
 app.controller('ModalProjectLoadInstanceCtrl', function ($scope, $uibModalInstance) 
 {
+ 
+  
+
+  $scope.ok = function () {
+    $uibModalInstance.close();
+  };
+
+  $scope.cancel = function () {
+    $uibModalInstance.dismiss('cancel');
+  };
+
  /* $scope.formData = { name: '', apiuser: '', apikey:'', manifest_file:'', project_ref:'', tests_location:'',status:'' };
 
   $scope.ok = function () {

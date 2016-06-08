@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="myApp">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta content="IE=edge" http-equiv="X-UA-Compatible">
@@ -7,93 +7,172 @@
     <meta content="" name="description">
     <meta content="" name="author">
     <link href="../../favicon.ico" rel="icon">
-    <title>Dashboard Template for Bootstrap</title><!-- Bootstrap core CSS -->
+    <title>Dashboard</title>
     
-    <link href="static/css/bootstrap.min.css" rel="stylesheet"><!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <link href="static/css/ie10-viewport-bug-workaround.css" rel="stylesheet"><!-- Custom styles for this template -->
+    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="static/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
     <link rel="stylesheet" href="static/css/bootstrap-table.css">
-    <link href="static/css/dashboard.css" rel="stylesheet"><!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <link href="static/css/dashboard.css" rel="stylesheet">
+    <link rel="stylesheet" href="static/css/font-awesome.min.css">
 
 </head>
-<body >
+<body ng-app="myApp"  ng-controller="ResourceController">
+
+<!--
+            <div ng-controller="ModalDemoCtrl">
+              <script type="text/ng-template" id="myModalContent.html">
+                <div class="modal-header">
+                    <h3 class="modal-title">Title</h3>
+                </div>
+                <div class="modal-body">
+                    <ul>
+                        <li ng-repeat="item in items">
+                            <a href="#" ng-click="$event.preventDefault(); selected.item = item">{[ item ]}</a>
+                        </li>
+                    </ul>
+                    Selected: <b>{[ selected.item ]}</b>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+                    <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+                </div>
+            </script>
+
+            <button type="button" class="btn btn-default" ng-click="open()">Open me!</button>
+            <div ng-show="selected">Selection from a modal: {[ selected ]}</div>
+          </div>
+-->
 
 
-
-<div ng-controller="ModalDemoCtrl">
-    <script type="text/ng-template" id="myModalContent.html">
-        <div class="modal-header">
-            <h3 class="modal-title">I'm a modal!</h3>
-        </div>
-        <div class="modal-body">
-            <ul>
-                <li ng-repeat="item in items">
-                    <a href="#" ng-click="$event.preventDefault(); selected.item = item">{[ item ]}</a>
-                </li>
-            </ul>
-            Selected: <b>{[ selected.item ]}</b>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
-            <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
-        </div>
-    </script>
-
-    <button type="button" class="btn btn-default" ng-click="open()">Open me!</button>
-    <button type="button" class="btn btn-default" ng-click="open('lg')">Large modal</button>
-    <button type="button" class="btn btn-default" ng-click="open('sm')">Small modal</button>
-    <button type="button" class="btn btn-default" ng-click="toggleAnimation()">Toggle Animation ({[ animationsEnabled ]})</button>
-    <div ng-show="selected">Selection from a modal: {[ selected ]}</div>
-</div>
-
-
-    <nav class="navbar navbar-inverse navbar-fixed-top" >
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <button aria-controls="navbar" aria-expanded="false" class="navbar-toggle collapsed" data-target="#navbar" data-toggle="collapse" type="button">
-                  <span class="sr-only">Toggle navigation</span> 
-                  <span class="icon-bar"></span> 
-                  <span class="icon-bar"></span> 
-                  <span class="icon-bar"></span>
-                </button> <a class="navbar-brand" href="#">Automate Viewer</a>
+    <!-- Create Proejct Modal -->
+    <div ng-controller="ProjectCtrl">
+      <script type="text/ng-template" id="ModalProjectCreate.html">
+    
+              <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Create New Project</h4>
+              </div>
+              <div class="modal-body">
                
-            </div>
-           
-            <div class="navbar-collapse collapse" id="navbar">
-                <ul class="nav navbar-nav navbar-right">
-                    
-                    <li>
-                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                        <span><a href="#" data-toggle="modal" data-target="#createNewProjectModal">Create New Project</a></span>
-                    <li>
-                        <a href="#"  data-toggle="modal" data-target="#loadProject" ng-click="loadProject()">Load Project</a>
-                    </li>
-                    <li>
-                        <a href="#">Settings</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+                  <div class="form-group">
+                      <label for="name">Project Name</label> 
+                      <input class="form-control" id="name" placeholder="Name" type="text" ng-model="formData.name">
+                  </div>
+                  <div class="form-group">
+                    <div class="input-group">
+                      <label class="input-group-btn">
+                        <span class="btn btn-primary">
+                          Browse… <input type="file" style="display: none;" multiple="true" accept="*.feature" >
+                        </span>
+                      </label>
+                      <input type="text" class="form-control" readonly="" id="projectFolderBrowse" ng-model="formData.location" >
+                    </div>
+
+                  </div>
+                  <div class="form-group">
+                      <label for="project_api_user">Behave tests folder</label> 
+                      <input class="form-control" id="project_tests_location" type="text"  placeholder="C:\\"  ng-model="formData.tests_location">
+                  </div>
+                  <div class="form-group">
+                      <label for="project_api_user">Browserstack API User</label> 
+                      <input class="form-control" id="project_api_user" type="text"  placeholder="API User"  ng-model="formData.apiuser">
+                  </div>
+                  <div class="form-group">
+                      <label for="project_access_key">Browserstack Access Key</label> 
+                      <input class="form-control" id="project_access_key" type="text"  placeholder="Access Key"  ng-model="formData.apikey" >
+                  </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal"  ng-click="cancel()">Close</button>
+                <button type="button" class="btn btn-primary" ng-click="ok()">Create Project</button>
+              </div>
+      </script>
+    
+      
+      <script type="text/ng-template" id="ModalProjectLoad.html">
+    
+              <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Load Project</h4>
+              </div>
+              <div class="modal-body">
+                <table id="load_project_table">
+                    <thead>
+                    <tr>
+                        <th data-field="name">Project Name</th>
+                        <th data-field="create_date">Create Date</th>
+                        <th data-field="modified_date">Modified Date</th>
+                    </tr>
+                    </thead>
+                </table>
+                
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal"  ng-click="cancel()">Close</button>
+                <button type="button" class="btn btn-primary" ng-click="ok()">Create Project</button>
+              </div>
+      </script>
+
+      <nav class="navbar navbar-inverse navbar-fixed-top">
+          <div class="container-fluid">
+              <div class="navbar-header">
+                  <button aria-controls="navbar" aria-expanded="false" class="navbar-toggle collapsed" data-target="#navbar" data-toggle="collapse" type="button">
+                    <span class="sr-only">Toggle navigation</span> 
+                    <span class="icon-bar"></span> 
+                    <span class="icon-bar"></span> 
+                    <span class="icon-bar"></span>
+                  </button> <a class="navbar-brand" href="#">Automate Viewer</a>
+                 
+              </div>
+             
+              <div class="navbar-collapse collapse" id="navbar">
+                <form class="navbar-form navbar-right" role="search">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    <span><a href="#"  class="btn btn-dark" data-toggle="modal" ng-click="createProject()">Create New Project</a></span>
+                    <span><a href="#"  class="btn btn-dark" data-toggle="modal" ng-click="loadProject('lg')">Load Project</a></span>
+                    <a href="#" class="btn btn-dark">Settings</a>
+              </div>
+          </div>
+      </nav>
+    </div>
+
+
 
     <div class="container-fluid" >
-
         <div class="row">
-          
              <div class="col-md-2 sidebar">
-                <ul class="nav nav-sidebar">
+              <div ng-show="projectData.manifest_file" >
+
+                <ul class="nav nav-sidebar" >
                     <li>
-                        <h3>My Test project</h3>
-                        <span>Parallel tests running: 0 / 5</span>
-                
+                        <h4>asdasd{[projectData.name]}</h4>
                     </li>
                 </ul>
-                <ul class="nav nav-sidebar">
+                <div class="panel-group">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <i class="pull-right fa fa-plus margin-bottom"></i>
+                      <h5>
+                        Access Keys
+                        <a data-toggle="collapse" href="#collapse1">Access Keys</a>
+                      </h5>
+                    </div>
+                    <div id="collapse1" class="panel-collapse collapse">
+                      <span><strong>API Username</strong></span>
+                      <div>{[projectData.apiuser]}</div>
+                      <span><strong>API Access Key</strong></span>
+                      <div>{[projectData.apikey]}</div>
+                    </div>
+                  </div>
+                </div>
+              
+                        <div>Parallel tests running: 0 / 5</div>
+              
+                <ul class="nav nav-sidebar" >
                     
                     <li>
                        <ul class="list-group">
                           <li class="list-group-item">
                             <div class="title">
-                                <i class="pull-right glyphicon glyphicon-refresh"></i><h5>My Workflow 1   </h5>
+                                <i class="pull-right fa fa-refresh fa-spin fa-2x fa-fw margin-bottom"></i><h5>My Workflow 1   </h5>
 
                             <div class="details">Started: about 4 hours ago</div>
                             <div class="sidebar-stat">
@@ -113,11 +192,10 @@
                         </ul>
                     </li>
                 </ul>
-               
+              </div>
             </div>
             <div class="col-sm-offset-2 col-md-10 main">
-           
-
+              <div ng-show="projectData.manifest_file">
                 <ul class="list-group tabcontainer" >
                    
                     <li class="list-group-item " >
@@ -189,7 +267,7 @@
                                         <span class="val">   12 secs</span>
                                       </li>
                                       <li class="session-status non-js-session">
-                                        <span class="val pull-right" style="width: 272px; padding-left: 3px;"><span class="success"><div style="word-wrap: break-word;"><span class="status-text">Completed</span><span class="build-reason" style="color:#919191;" id="build-reason-757ce39d84e17b8880c1d275e3100974b76bc644"></span></div></span></span>
+                                        <span class="val pull-right" style="width: 272px; padding-left: 3px;"><span class="success"><div style="word-wrap: break-word;"><img src="/images/layout/sp-success.png" style="width:12px; height:auto; float:none; margin-right:5px; margin-top:-3px;"><span class="status-text">Completed</span><span class="build-reason" style="color:#919191;" id="build-reason-757ce39d84e17b8880c1d275e3100974b76bc644"></span></div></span></span>
                                         <span class="title" style="width: 85px;">Status</span>
                                         <div class="clearfix"></div>
                                       </li>
@@ -214,7 +292,7 @@
 
                                       <li>
                                         <span class="title">Local testing</span>
-                                        
+                                        <span class="val"><img src="/images/layout/sp-tunnel-connect.jpg" style="width:14px; height:auto; float:none; margin-right:5px; margin-top:-3px;">False</span>
                                       </li>
                                       <li class="">
                                         <span class="title">User name</span>
@@ -223,20 +301,26 @@
                                     </ul>
                                   </div>
                               </div>
-                          
-
-                            
                             </div>
                         </div>
                     </li>
                 </ul>
+              </div>
 
-                
-                
+              <div ng-show="!projectData.manifest_file">
+               <div class="row center unopened">
+                    <div class="col-md-4 col-md-offset-3">
+                      <i class="fa fa-rocket fa-5x fa-fw lightgrey"></i>
+                        <h3></span>No project loaded</span></h3>
+                        <span>Create or load a project to get started</span>
+                    </div>
+                </div>
+              </div>
             </div>
         </div>
 
     </div>
+
 
 
     <!-- Bootstrap core JavaScript
@@ -245,11 +329,12 @@
 
     <script src="static/js/ie-emulation-modes-warning.js"></script>
     <script src="static/js/angular.min.js"></script>
-    <script src="static/js/angular-animate.js"></script>
     <script src="static/js/angular-resource.min.js"></script>
-    <script src="static/js/ui-bootstrap-tpls-1.3.3.min.js"></script> 
-    <script src="static/js/jquery.min.js"></script> 
-  
+    <script src="static/js/app.js"></script>
+    <script src="static/js/controllers/controller.js"></script>
+    <script src="static/js/jquery.min.js" type="text/javascript"></script> 
+    
+   
    
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -264,11 +349,9 @@
     <script>
     window.jQuery || document.write('<script src="assets/js/vendor/jquery.min.js"><\/script>')
     </script> 
-    <script src="static/js/bootstrap.min.js">
-    </script> <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
+    <script src="static/js/bootstrap.min.js"></script> 
+    <script src="static/js/ui-bootstrap-tpls-1.3.3.min.js"></script> 
     <script src="static/js/bootstrap-table.min.js"></script>
-    <script src="static/js/app.js"></script>
-    <script src="static/js/controllers/controller.js"></script>
 
 
 <script type="text/javascript">
@@ -337,6 +420,8 @@ $(function () {
     $('#table2').bootstrapTable({
         data: data
     });
+
+    
 });
 
 
@@ -378,7 +463,6 @@ function detailFormatter(index, row) {
 </script>
 
 <script>
-/*
   function chooseFile(name) {
     var chooser = $(name);
     chooser.unbind('change');
@@ -388,7 +472,7 @@ function detailFormatter(index, row) {
 
     chooser.trigger('click');  
   }
-  chooseFile('#project_folder');*/
+  chooseFile('#project_folder');
 </script>
 
 </body>

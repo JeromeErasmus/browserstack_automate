@@ -61,13 +61,19 @@ def projectdata():
 			project_data = project.create_project(data['name'], data['apiuser'], data['apikey'], data['tests_location'])
 			resp = CustomResponse("success", project_data, '')
 		else:
-			resp = CustomResponse("error", None, "Incorrect post data")
-			
+			resp = CustomResponse("error", None, "Incorrect post data")	
 		return MyEncoder().encode(resp)
+
 	elif request.method == 'GET':
+
 		if request.args.get('project_path'):
-			result = project.load(request.args.get('project_path'))
-		return jsonify(dict(success=result))
+			data = project.load(request.args.get('project_path'))
+		else:
+			data = project.get_all_projects()
+			
+		resp = CustomResponse("success", data, '')
+		return MyEncoder().encode(resp)
+		
 	return jsonify([])
 
 #@client_app.route('/stream')

@@ -19,9 +19,6 @@ class Project():
 		self.project_folder_name = "automate.project"
 		self.manifest_file_name = "automate.prj"
 		self.reports_dir_name = "reports"
-		#self.project_dir = None
-		#self.manifest_file = None
-		#self.reports_dir = None
 		self.runners = []
 		self.project = dict()
 
@@ -34,7 +31,25 @@ class Project():
 		if auto_create_project == True:
 			self.create_project(project_dir)
 
-		return self.load_manifest()
+		return self.load_manifest(self.manifest_file)['runners']
+
+	def get_all_projects(self):
+		files = []
+		for name in os.listdir(self.appdata_path):
+			full_name = os.path.join(self.appdata_path, name)
+			if os.path.isdir(full_name):
+				manifest_file = os.path.join(full_name, self.manifest_file_name)
+				if os.path.exists(manifest_file):
+					file_contents = self.load_manifest(manifest_file)
+				
+					obj = dict(name=file_contents['project']['name'], 
+							   modified_date=file_contents['project']['modified_date'],
+							   create_date=file_contents['project']['create_date'],
+							   manifest_file=file_contents['project']['manifest_file'])
+					files.append(obj)
+		
+		return files
+
 
 	def create_project(self, name, apiuser=None, apikey=None, tests_location=None):
 		self.project['name'] = name
@@ -127,19 +142,18 @@ class Project():
 
 
 
-	def load_manifest(self):
+	def load_manifest(self, manifest_file):
 		try:
-			with open(self.manifest_file, "r+") as f:
+			with open(manifest_file, "r+") as f:
 				contents = f.read()
 				if contents:
-					self.runners = json.loads(contents)['runners']
+					return json.loads(contents)
 				else:
-					pass
+					return False
 				f.close()
-			print "Loaded manifest file: ", self.manifest_file
-			return True
+			print "Loaded manifest file: ", manifest_file
 		except IOError:
-			print "Error loading manifest file: ", self.manifest_file
+			print "Error loading manifest file: ", manifest_file
 			return False
 
 	def save_manifest(self, manifest_file):

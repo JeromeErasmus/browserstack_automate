@@ -50,7 +50,9 @@ app.factory("RequestResults", function($resource) {
 });
 
 app.factory("Project", function($resource) {
-  return $resource("/project")
+  return $resource("/project", {}, {
+    query: { isArray: false }
+  })
 });
 
 // create a shared scope object to share between controllers
