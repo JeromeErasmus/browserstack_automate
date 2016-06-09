@@ -22,16 +22,11 @@ class Project():
 		self.runners = []
 		self.project = dict()
 
-	def load(self, project_dir, auto_create_project=False):
-		self.project_dir = project_dir
-		self.manifest_file = os.path.join(self.project_dir, self.manifest_file_name)
-		self.reports_dir   = os.path.join(self.project_dir, self.project_folder_name, self.reports_dir_name)
-
-		# check if a project has already been created. If not create one
-		if auto_create_project == True:
-			self.create_project(project_dir)
-
-		return self.load_manifest(self.manifest_file)['runners']
+	def load(self, project_file):
+		if not os.path.exists(project_file):
+			return False
+		file_contents = self.load_manifest(project_file)
+		return file_contents
 
 	def get_all_projects(self):
 		files = []

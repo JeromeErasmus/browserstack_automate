@@ -65,13 +65,22 @@ def projectdata():
 		return MyEncoder().encode(resp)
 
 	elif request.method == 'GET':
-
 		if request.args.get('project_path'):
 			data = project.load(request.args.get('project_path'))
+			if data:
+				resp = CustomResponse("success", data, '')
+			else:
+				resp = CustomResponse("error", None, 'No projects found')
+
 		else:
 			data = project.get_all_projects()
+			if data:
+				resp = CustomResponse("success", data, '')
+			else:
+				resp = CustomResponse("error", None, 'No project found')
 			
-		resp = CustomResponse("success", data, '')
+			
+		
 		return MyEncoder().encode(resp)
 		
 	return jsonify([])
